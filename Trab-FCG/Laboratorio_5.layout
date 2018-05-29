@@ -2,41 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="src\main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="src\shader_vertex.glsl" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="64472" topLine="631" />
-		</Cursor>
-		<Folding>
-			<Collapse line="467" />
-			<Collapse line="604" />
-			<Collapse line="610" />
-			<Collapse line="625" />
-			<Collapse line="687" />
-			<Collapse line="826" />
-			<Collapse line="840" />
-			<Collapse line="855" />
-			<Collapse line="925" />
-			<Collapse line="977" />
-			<Collapse line="1003" />
-			<Collapse line="1057" />
-			<Collapse line="1125" />
-			<Collapse line="1143" />
-			<Collapse line="1213" />
-			<Collapse line="1228" />
-			<Collapse line="1250" />
-			<Collapse line="1264" />
-			<Collapse line="1280" />
-			<Collapse line="1317" />
-		</Folding>
-	</File>
-	<File name="src\glad.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4158" topLine="173" />
+			<Cursor1 position="2441" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\shader_fragment.glsl" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
+	<File name="src\textrendering.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4450" topLine="101" />
+			<Cursor1 position="2352" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="include\utils.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -44,9 +17,29 @@
 			<Cursor1 position="55" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\shader_vertex.glsl" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="src\Kart.cpp" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2441" topLine="0" />
+			<Cursor1 position="21" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\shader_fragment.glsl" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4450" topLine="101" />
+		</Cursor>
+	</File>
+	<File name="src\glad.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4158" topLine="173" />
+		</Cursor>
+	</File>
+	<File name="include\Kart.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="474" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="include\glm\gtc\quaternion.inl" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9905" topLine="323" />
 		</Cursor>
 	</File>
 	<File name="include\matrices.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -54,9 +47,9 @@
 			<Cursor1 position="69" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\textrendering.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2352" topLine="0" />
+			<Cursor1 position="1365" topLine="49" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
