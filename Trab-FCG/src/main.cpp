@@ -287,6 +287,8 @@ int main(int argc, char* argv[])
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
+    LoadTextureImage("../../data/camero map.png"); // TextureImage2
+
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -300,6 +302,10 @@ int main(int argc, char* argv[])
     ObjModel planemodel("../../data/plane.obj");
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
+
+    ObjModel carmodel("../../data/camero.obj");
+    BuildTrianglesAndAddToVirtualScene(&carmodel);
+
 
     if ( argc > 1 )
     {
@@ -430,28 +436,39 @@ int main(int argc, char* argv[])
         #define SPHERE 0
         #define BUNNY  1
         #define PLANE  2
+        #define PISTA  3
+        #define CAR    4
 
         // Desenhamos o modelo da esfera
-        model = Matrix_Translate(-1.0f,0.0f,0.0f)
+        model = Matrix_Translate(0.5f,0.0f,-6.0f)
               * Matrix_Rotate_Z(0.6f)
-              * Matrix_Rotate_X(0.2f)
-              * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
+              * Matrix_Rotate_X(0.2f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, SPHERE);
-        DrawVirtualObject("sphere");
+        glUniform1i(object_id_uniform, CAR);
+        DrawVirtualObject("Camero");
 
         // Desenhamos o modelo do coelho
         model = Matrix_Translate(mainKart.getPosition().x,mainKart.getPosition().y,mainKart.getPosition().z);
               //* Matrix_Rotate_Y(g_AngleX + (float)glfwGetTime() * 0.1f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, BUNNY);
-        DrawVirtualObject("bunny");
+        glUniform1i(object_id_uniform, CAR);
+        DrawVirtualObject("Camero");
 
-        // Desenhamos o plano do chão
-        model = Matrix_Translate(0.0f,-1.1f,0.0f);
+        model = Matrix_Translate(0.0f,-1.0f,0.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
+
+       /* // Desenhamos o plano do chão
+        model = Matrix_Translate(0.0f,-1.0f,0.0f);
+                //Matrix_Scale(1.5f, 1.5f, 1.5f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PISTA);
+        DrawVirtualObject("terrain-grass_Cube.701");
+        DrawVirtualObject("terrain-grass_Cube.701_racecolors");
+*/
+
+
 
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
@@ -627,6 +644,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureImage0"), 0);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage3"), 3);
     glUseProgram(0);
 }
 
