@@ -138,13 +138,6 @@ struct SceneObject
     glm::vec3    bbox_max;
 };
 
-struct Kart1
-{
-    glm::vec4 position;
-    glm::vec4 speed;
-    glm::vec4 acceleration;
-    glm::vec4 orientation;
-};
 
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
 
@@ -347,7 +340,7 @@ int main(int argc, char* argv[])
 
 
 
-    Kart mainKart= Kart(glm::vec4(1.0f,0.0f,0.0f,1.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),glm::vec4(1.0f,0.0f,0.0f,0.0f));
+    Kart mainKart= Kart(glm::vec4(1.0f,0.0f,0.0f,1.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),0.0f);
 
     //glm::vec4 kartPosition= glm::vec4(1.0f,0.0f,0.0f,1.0f);
     //glm::vec4 kartSpeed= glm::vec4(1.0f,0.0f,0.0f,0.0f);
@@ -469,8 +462,8 @@ int main(int argc, char* argv[])
 
 
         // Desenhamos o modelo do coelho
-        model = Matrix_Translate(mainKart.getPosition().x,mainKart.getPosition().y,mainKart.getPosition().z);
-              //* Matrix_Rotate_Y(g_AngleX + (float)glfwGetTime() * 0.1f);
+        model = Matrix_Translate(mainKart.getPosition().x,mainKart.getPosition().y,mainKart.getPosition().z)
+              * Matrix_Rotate_Y(mainKart.getOrientationAngle());
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, CAR);
         DrawVirtualObject("Camero");

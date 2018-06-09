@@ -16,8 +16,13 @@ glm::vec4 Kart::getAcceleration(){
     return acceleration;
 }
 
-glm::vec4 Kart::getOrientation(){
+float Kart::getOrientationAngle(){
     return orientation;
+}
+
+glm::vec4 Kart::getOrientationVector(){
+    glm::vec4 forwardVector= glm::vec4(0.0,0.0,1.0,0.0);
+    return getMatrixRotateOrientation(-1*getOrientationAngle())*forwardVector;
 }
 
 void Kart::setPosition(glm::vec4 positionInput){
@@ -32,16 +37,16 @@ void Kart::setAcceleration(glm::vec4 accelerationInput){
     acceleration = glm::normalize(accelerationInput);
 }
 
-void Kart::setOrientation(glm::vec4 orientationInput){
-    orientation = glm::normalize(orientationInput);
+void Kart::setOrientationAngle(float orientationInput){
+    orientation = orientationInput;
 }
 
-Kart::Kart(glm::vec4 positionInput,glm::vec4 speedInput,glm::vec4 accelerationInput,glm::vec4 orientationInput)
+Kart::Kart(glm::vec4 positionInput,glm::vec4 speedInput,glm::vec4 accelerationInput,float orientationInput)
 {
     setPosition(positionInput);
     setSpeed(speedInput);
     setAcceleration(accelerationInput);
-    setOrientation(orientationInput);
+    setOrientationAngle(orientationInput);
     //ctor
 }
 
@@ -61,7 +66,7 @@ void Kart::updateAcceleration(bool UpKeyPressed,bool DownKeyPressed,bool LeftKey
     glm::vec4 accelerationDirection = glm::vec4(0.0f,0.0f,0.0f,0.0f);
     if(UpKeyPressed){
         if(!DownKeyPressed){
-            accelerationDirection = glm::normalize(getOrientation());
+            accelerationDirection = 10.0f*glm::normalize(getOrientationVector());
         }
     }
     setAcceleration(accelerationDirection);
@@ -71,18 +76,28 @@ void Kart::updateAcceleration(bool UpKeyPressed,bool DownKeyPressed,bool LeftKey
 void Kart::updateSpeed(double previousTime, double currentTime){
     double timeDifference= currentTime- previousTime;
     glm::vec4 oldSpeed=getSpeed();
-    glm::vec4 newSpeed=oldSpeed+ (getAcceleration()*(float)timeDifference);
-    if(glm::length(newSpeed)<20){
-        setSpeed(oldSpeed+ (getAcceleration()*(float)timeDifference));
+    /*
+    glm::vec4 normOldSpeed = glm::normalize(oldSpeed);
+    glm::vec4 accelerationDirection=glm::normalize(getAcceleration());
+    float angle = acos(dot(oldSpeed,getAcceleration())/(normOldSpeed*accelerationDirection));
+    if((angle<2 ))
+    {
+        oldSpeed=oldSpeed*0.5f;
+    }*/
+    glm::vec4 speedFriction=oldSpeed - (oldSpeed *(float)timeDifference*0.1f);
+    glm::vec4 newSpeed=speedFriction+ (getAcceleration()*(float)timeDifference);
+
+    if(glm::length(newSpeed)<1000){
+        setSpeed(newSpeed);
     }
 }
 
-float Kart::getKartRotation(bool LeftKeyPressed,bool RightKeyPressed){
-    if(LeftKeyPressed){
+float Kart::getKartRotation(bool LeftKeyPressed,bool RightKeyPressed, bool UpKeyPressed){
+    if(LeftKeyPressed&&UpKeyPressed){
         if(RightKeyPressed){
             return 0;
         }else return TURNING_VALUE;
-    }else if(RightKeyPressed){
+    }else if(RightKeyPressed&&UpKeyPressed){
         return -1*TURNING_VALUE;
     }else return 0;
 }
@@ -110,15 +125,25 @@ glm::mat4 Kart::getMatrixRotateOrientation(float angle)
 
 void Kart::updateOrientation(float kartRotation,double previousTime, double currentTime){
     double timeDifference= currentTime- previousTime;
-    if(kartRotation!=0)
-        setOrientation(getMatrixRotateOrientation(kartRotation*timeDifference)*getOrientation());
+    float oldAngle=getOrientationAngle();
+
+    setOrientationAngle(oldAngle + (kartRotation*timeDifference*0.2f));
+
+}
+
+void Kart::updateSpeedOrientation(float kartRotation,double previousTime, double currentTime){
+    double timeDifference= currentTime- previousTime;
+    glm::vec4 oldSpeed=getSpeed();
+
+    setSpeed(getMatrixRotateOrientation(kartRotation*timeDifference*-0.2f)*oldSpeed );
 
 }
 
 void Kart::update(bool UpKeyPressed,bool DownKeyPressed,bool LeftKeyPressed,bool RightKeyPressed,double previousTime, double currentTime){
 
-    float kartRotation= getKartRotation(LeftKeyPressed,RightKeyPressed);
+    float kartRotation= getKartRotation(LeftKeyPressed,RightKeyPressed,UpKeyPressed);
     updateOrientation(kartRotation,previousTime,currentTime);
+    updateSpeedOrientation(kartRotation,previousTime,currentTime);
     updateAcceleration(UpKeyPressed,DownKeyPressed,previousTime, currentTime);
     updateSpeed(previousTime,currentTime);
     updatePosition(previousTime,currentTime);
