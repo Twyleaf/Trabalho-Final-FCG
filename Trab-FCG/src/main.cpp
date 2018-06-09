@@ -285,9 +285,11 @@ int main(int argc, char* argv[])
     LoadShadersFromFiles();
 
     // Carregamos duas imagens para serem utilizadas como textura
-    LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
-    LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
-    LoadTextureImage("../../data/camero map.png"); // TextureImage2
+    LoadTextureImage("../../data/skytexture.jpg");      // TextureImage0
+    LoadTextureImage("../../data/grass.jpg"); // TextureImage1
+    LoadTextureImage("../../data/asphalt.jpg"); // TextureImage2
+    LoadTextureImage("../../data/camero map.png"); // TextureImage3
+
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
@@ -306,6 +308,17 @@ int main(int argc, char* argv[])
     ObjModel carmodel("../../data/camero.obj");
     BuildTrianglesAndAddToVirtualScene(&carmodel);
 
+    ObjModel trackmodel("../../data/track2.obj");
+    BuildTrianglesAndAddToVirtualScene(&trackmodel);
+
+    ObjModel planefrontmodel("../../data/planeFront.obj");
+    BuildTrianglesAndAddToVirtualScene(&planefrontmodel);
+
+    ObjModel planebackmodel("../../data/planeBack.obj");
+    BuildTrianglesAndAddToVirtualScene(&planebackmodel);
+
+    ObjModel domemodel("../../data/skydome.obj");
+    BuildTrianglesAndAddToVirtualScene(&domemodel);
 
     if ( argc > 1 )
     {
@@ -377,7 +390,8 @@ int main(int argc, char* argv[])
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-        camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);// glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
+        //camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);// glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
+        glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
         glm::vec4 camera_lookat_l    = mainKart.getPosition(); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
         glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
@@ -394,7 +408,7 @@ int main(int argc, char* argv[])
         // estão no sentido negativo! Veja slides 191-194 do documento
         // "Aula_09_Projecoes.pdf".
         float nearplane = -0.1f;  // Posição do "near plane"
-        float farplane  = -10.0f; // Posição do "far plane"
+        float farplane  = -250.0f; // Posição do "far plane"
 
         if (g_UsePerspectiveProjection)
         {
@@ -438,6 +452,12 @@ int main(int argc, char* argv[])
         #define PLANE  2
         #define PISTA  3
         #define CAR    4
+        #define SKY    5
+
+        model = Matrix_Translate(0.0f,-10.0f,0.0f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, SKY);
+        DrawVirtualObject("skydome");
 
         // Desenhamos o modelo da esfera
         model = Matrix_Translate(0.5f,0.0f,-6.0f)
@@ -447,6 +467,7 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, CAR);
         DrawVirtualObject("Camero");
 
+
         // Desenhamos o modelo do coelho
         model = Matrix_Translate(mainKart.getPosition().x,mainKart.getPosition().y,mainKart.getPosition().z);
               //* Matrix_Rotate_Y(g_AngleX + (float)glfwGetTime() * 0.1f);
@@ -454,19 +475,18 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, CAR);
         DrawVirtualObject("Camero");
 
-        model = Matrix_Translate(0.0f,-1.0f,0.0f);
+        model = Matrix_Translate(0.0f,-0.3f,0.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
 
-       /* // Desenhamos o plano do chão
-        model = Matrix_Translate(0.0f,-1.0f,0.0f);
+
+    // Desenhamos a pista
+        model = Matrix_Translate(0.0f,-0.3f,0.0f);
                 //Matrix_Scale(1.5f, 1.5f, 1.5f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, PISTA);
-        DrawVirtualObject("terrain-grass_Cube.701");
-        DrawVirtualObject("terrain-grass_Cube.701_racecolors");
-*/
+        DrawVirtualObject("track");
 
 
 

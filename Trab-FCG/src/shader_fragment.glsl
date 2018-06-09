@@ -24,6 +24,7 @@ uniform mat4 projection;
 #define PLANE  2
 #define PISTA  3
 #define CAR    4
+#define SKY    5
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -70,6 +71,10 @@ void main()
     // Coordenadas de textura U e V
     float U = 0.0;
     float V = 0.0;
+    vec3 Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
+
+    // Equação de Iluminação
+    float lambert = max(0,dot(n,l));
 
     if ( object_id == SPHERE )
     {
@@ -102,6 +107,7 @@ void main()
 
         U = (theta+M_PI)/(2*M_PI);
         V = (phi+M_PI_2)/M_PI;
+
     }
     else if ( object_id == BUNNY )
     {
@@ -124,37 +130,60 @@ void main()
 
         U = (position_model.x - minx)/(maxx-minx);
         V = (position_model.y - miny)/(maxy-miny);
+
     }
     else if ( object_id == PLANE )
     {
         // Coordenadas de textura do plano, obtidas do arquivo OBJ.
         U = texcoords.x;
         V = texcoords.y;
+
+        Kd0 = texture(TextureImage1, vec2(U,V)).rgb;
     }
 
     else if ( object_id == CAR )
     {
-        // Coordenadas de textura do plano, obtidas do arquivo OBJ.
         U = texcoords.x;
         V = texcoords.y;
-    }
-
-    vec3 Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
-    if ( object_id == CAR)
-    {
-        // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
-        Kd0 = texture(TextureImage2, vec2(U,V)).rgb;
+        // Coordenadas de textura do plano, obtidas do arquivo OBJ.
+        Kd0 = texture(TextureImage3, vec2(U,V)).rgb;
     }
 
     else if ( object_id == PISTA)
     {
+        U = texcoords.x;
+        V = texcoords.y;
         // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
-        Kd0 = texture(TextureImage3, vec2(U,V)).rgb;
+        Kd0 = texture(TextureImage2, vec2(U,V)).rgb;
+    }
+    else if ( object_id == SKY)
+    {
+        /*
+        U = texcoords.x;
+        V = texcoords.y;
+        // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
+        Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
+        //lambert = pow(lambert,0.2);
+        */
+        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+
+        vec4 pVec=position_model-bbox_center;
+
+        float ro=length(pVec);
+
+        vec4 pVector = bbox_center + ro*(position_model - bbox_center)/(length(position_model - bbox_center));
+
+        vec4 pLine = pVector - bbox_center;
+
+        float theta=atan(pLine.x,pLine.z);
+
+        float phi=asin(pLine.y/ro);
+
+        U = (theta+M_PI)/(2*M_PI);
+        V = (phi+M_PI_2)/M_PI;
+        Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
     }
 
-
-    // Equação de Iluminação
-    float lambert = max(0,dot(n,l));
 
     color = Kd0 * (lambert + 0.01);
 
