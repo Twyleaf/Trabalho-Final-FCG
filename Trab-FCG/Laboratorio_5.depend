@@ -571,7 +571,11 @@
 	<inttypes.h>
 	<stdint.h>
 
+<<<<<<< HEAD
 1527627926 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\main.cpp
+=======
+1528573953 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\main.cpp
+>>>>>>> master
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1094,10 +1098,17 @@
 1526903671 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
+<<<<<<< HEAD
 1527628656 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\kart.cpp
 	"Kart.h"
 
 1527623113 c:\git repository\trabalho-final-fcg\trab-fcg\include\kart.h
+=======
+1528583009 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\kart.cpp
+	"Kart.h"
+
+1528582802 c:\git repository\trabalho-final-fcg\trab-fcg\include\kart.h
+>>>>>>> master
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<glm/mat4x4.hpp>

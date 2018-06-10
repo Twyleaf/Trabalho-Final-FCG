@@ -17,18 +17,20 @@ class Kart
         glm::vec4 getPosition();
         glm::vec4 getSpeed();
         glm::vec4 getAcceleration();
-        glm::vec4 getOrientation();
+        float getOrientationAngle();
+        glm::vec4 getOrientationVector();
         void setPosition(glm::vec4 positionInput);
         void setSpeed(glm::vec4 speedInput);
         void setAcceleration(glm::vec4 accelerationInput);
-        void setOrientation(glm::vec4 orientationInput);
-        Kart(glm::vec4 positionInput,glm::vec4 speedInput,glm::vec4 accelerationInput,glm::vec4 orientationInput);
+        void setOrientationAngle(float orientationInput);
+        Kart(glm::vec4 positionInput,glm::vec4 speedInput,glm::vec4 accelerationInput,float orientationInput);
         virtual ~Kart();
         void updatePosition(double previousTime, double currentTime);
         void updateAcceleration(bool UpKeyPressed,bool DownKeyPressed,bool LeftKeyPressed,bool RightKeyPressed);
         void updateSpeed(double previousTime, double currentTime);
-        float getKartRotation(bool LeftKeyPressed,bool RightKeyPressed);
+        float getKartRotation(bool LeftKeyPressed,bool RightKeyPressed,bool UpKeyPressed);
         void updateOrientation(float kartRotation,double previousTime, double currentTime);
+        void updateSpeedOrientation(float kartRotation,double previousTime, double currentTime);
         void update(bool UpKeyPressed,bool DownKeyPressed,bool LeftKeyPressed,bool RightKeyPressed,double previousTime, double currentTime);
 
     protected:
@@ -37,7 +39,7 @@ class Kart
         glm::vec4 position;
         glm::vec4 speed;
         glm::vec4 acceleration;
-        glm::vec4 orientation;
+        float orientation;
         glm::mat4 getMatrixRotateOrientation(float angle);
 };
 
