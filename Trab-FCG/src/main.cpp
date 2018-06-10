@@ -297,10 +297,6 @@ int main(int argc, char* argv[])
     ComputeNormals(&spheremodel);
     BuildTrianglesAndAddToVirtualScene(&spheremodel);
 
-    ObjModel bunnymodel("../../data/bunny.obj");
-    ComputeNormals(&bunnymodel);
-    BuildTrianglesAndAddToVirtualScene(&bunnymodel);
-
     ObjModel planemodel("../../data/plane.obj");
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
@@ -310,12 +306,6 @@ int main(int argc, char* argv[])
 
     ObjModel trackmodel("../../data/track2.obj");
     BuildTrianglesAndAddToVirtualScene(&trackmodel);
-
-    ObjModel planefrontmodel("../../data/planeFront.obj");
-    BuildTrianglesAndAddToVirtualScene(&planefrontmodel);
-
-    ObjModel planebackmodel("../../data/planeBack.obj");
-    BuildTrianglesAndAddToVirtualScene(&planebackmodel);
 
     ObjModel domemodel("../../data/skydome.obj");
     BuildTrianglesAndAddToVirtualScene(&domemodel);
@@ -454,10 +444,13 @@ int main(int argc, char* argv[])
         #define CAR    4
         #define SKY    5
 
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
         model = Matrix_Translate(0.0f,-10.0f,0.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SKY);
         DrawVirtualObject("skydome");
+        glDisable(GL_CULL_FACE);
 
         // Desenhamos o modelo da esfera
         model = Matrix_Translate(0.5f,0.0f,-6.0f)
