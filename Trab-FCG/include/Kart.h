@@ -28,7 +28,7 @@ class Kart
         void updatePosition(double previousTime, double currentTime);
         void updateAcceleration(bool UpKeyPressed,bool DownKeyPressed,bool LeftKeyPressed,bool RightKeyPressed);
         void updateSpeed(double previousTime, double currentTime);
-        float getKartRotation(bool LeftKeyPressed,bool RightKeyPressed,bool UpKeyPressed);
+        float getKartRotation(bool LeftKeyPressed,bool RightKeyPressed,bool UpKeyPressed,bool DownKeyPressed);
         void updateOrientation(float kartRotation,double previousTime, double currentTime);
         void updateSpeedOrientation(float kartRotation,double previousTime, double currentTime);
         void update(bool UpKeyPressed,bool DownKeyPressed,bool LeftKeyPressed,bool RightKeyPressed,double previousTime, double currentTime);

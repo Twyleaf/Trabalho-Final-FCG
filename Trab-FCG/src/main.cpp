@@ -335,7 +335,7 @@ int main(int argc, char* argv[])
     //glm::vec4 kartPosition= glm::vec4(1.0f,0.0f,0.0f,1.0f);
     //glm::vec4 kartSpeed= glm::vec4(1.0f,0.0f,0.0f,0.0f);
 
-    glm::vec4 camera_position_c  = glm::vec4(0.0f,0.0f,2.5f,1.0f);
+    glm::vec4 camera_position_c  = glm::vec4(0.0f,1.5f,-2.5f,1.0f);
 
 
     // Ficamos em loop, renderizando, até que o usuário feche a janela
@@ -373,8 +373,8 @@ int main(int argc, char* argv[])
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-        //camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);// glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
-        glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
+        camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);// glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
+        //glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
         glm::vec4 camera_lookat_l    = mainKart.getPosition(); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
         glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
@@ -1565,7 +1565,9 @@ void PrintObjModelInfo(ObjModel* model)
 glm::vec4 getNewCameraPosition(glm::vec4 objectPosition,glm::vec4 oldCameraPosition,float maximumObjectDistance){
     float objectToCameraDistance= glm::length(objectPosition-oldCameraPosition);
     if(objectToCameraDistance>maximumObjectDistance){
-        return oldCameraPosition+ (objectToCameraDistance-maximumObjectDistance)*glm::normalize(objectPosition-oldCameraPosition);
+        oldCameraPosition= oldCameraPosition+ (objectToCameraDistance-maximumObjectDistance)*glm::normalize(objectPosition-oldCameraPosition);
+        oldCameraPosition.y=1.5f;
+        return oldCameraPosition;
     }else return oldCameraPosition;
 }
 
