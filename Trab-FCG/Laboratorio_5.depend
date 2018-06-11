@@ -573,7 +573,7 @@
 
 1526903671 D
 
-1528654080 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\main.cpp
+1528722405 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -596,6 +596,7 @@
 	"utils.h"
 	"matrices.h"
 	"Kart.h"
+	"CollisionWall.h"
 
 1528582802 ter
 	<cmath>

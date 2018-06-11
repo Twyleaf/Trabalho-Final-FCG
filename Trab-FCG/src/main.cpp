@@ -110,6 +110,7 @@ void TextRendering_PrintMatrixVectorProductDivW(GLFWwindow* window, glm::mat4 M,
 // outras informações do programa. Definidas após main().
 void TextRendering_ShowModelViewProjection(GLFWwindow* window, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec4 p_model);
 void TextRendering_ShowEulerAngles(GLFWwindow* window);
+void TextRendering_ShowKartPosition(GLFWwindow* window, glm::vec4 kartPosition);
 void TextRendering_ShowProjection(GLFWwindow* window);
 void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
 
@@ -331,10 +332,17 @@ int main(int argc, char* argv[])
 
     glm::vec4 frontFace[2];
     glm::vec4 backFace[2];
+    frontFace[0]=glm::vec4(-8.0f,0.0f,43.0f,1.0f);
+    backFace[0]=glm::vec4(-8.0f,0.0f,39.0f,1.0f);
+    frontFace[1]=glm::vec4(110.0f,0.0f,43.0f,1.0f);
+    backFace[1]=glm::vec4(110.0f,0.0f,39.0f,1.0f);
+
+    /*
     frontFace[0]=glm::vec4(20.0f,0.0f,-8.0f,1.0f);
     backFace[0]=glm::vec4(18.0f,0.0f,-8.0f,1.0f);
     frontFace[1]=glm::vec4(21.0f,0.0f,112.0f,1.0f);
     backFace[1]=glm::vec4(19.0f,0.0f,110.0f,1.0f);
+    */
 
 
     CollisionWall wall=CollisionWall(frontFace,backFace);
@@ -493,8 +501,10 @@ int main(int argc, char* argv[])
         //TextRendering_ShowModelViewProjection(window, projection, view, model, p_model);
 
         // Imprimimos na tela os ângulos de Euler que controlam a rotação do
-        // terceiro cubo.
-        TextRendering_ShowEulerAngles(window);
+        // terceiro cubo (NÂO MAIS NO PROGRAMA)
+        //TextRendering_ShowEulerAngles(window);
+
+        TextRendering_ShowKartPosition(window, mainKart.getPosition());
 
         // Imprimimos na informação sobre a matriz de projeção sendo utilizada.
         TextRendering_ShowProjection(window);
@@ -1345,6 +1355,18 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
 
     char buffer[80];
     snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+
+    TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
+}
+
+void TextRendering_ShowKartPosition(GLFWwindow* window, glm::vec4 kartPosition){
+    if ( !g_ShowInfoText )
+        return;
+
+    float pad = TextRendering_LineHeight(window);
+
+    char buffer[80];
+    snprintf(buffer, 80, "Kart position = X(%f)*Y(%f)*Z(%f)\n", kartPosition.x, kartPosition.y, kartPosition.z);
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }

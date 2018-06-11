@@ -145,10 +145,10 @@ glm::vec4* Kart::getCollisionRectangle(){
     glm::vec4 leftVector=getMatrixRotateOrientation(M_PI_2)*forwardVector;
     glm::vec4 center=getPosition();
     glm::vec4 rectangle[4];
-    rectangle[0]=center+forwardVector*1.8f+leftVector*0.8f;
-    rectangle[1]=center+forwardVector*1.8f-leftVector*0.8f;
-    rectangle[2]=center-forwardVector*1.8f+leftVector*0.8f;
-    rectangle[3]=center-forwardVector*1.8f-leftVector*0.8f;
+    rectangle[0]=center+forwardVector*1.8f+leftVector*0.7f;
+    rectangle[1]=center+forwardVector*1.8f-leftVector*0.7f;
+    rectangle[2]=center-forwardVector*1.8f+leftVector*0.7f;
+    rectangle[3]=center-forwardVector*1.8f-leftVector*0.7f;
     return rectangle;
 }
 
