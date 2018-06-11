@@ -48,6 +48,7 @@
 #include "utils.h"
 #include "matrices.h"
 #include "Kart.h"
+#include "CollisionWall.h"
 
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
@@ -328,11 +329,21 @@ int main(int argc, char* argv[])
 
     double previousTime=glfwGetTime();
 
+    glm::vec4 frontFace[2];
+    glm::vec4 backFace[2];
+    frontFace[0]=glm::vec4(20.0f,0.0f,-8.0f,1.0f);
+    backFace[0]=glm::vec4(18.0f,0.0f,-8.0f,1.0f);
+    frontFace[1]=glm::vec4(21.0f,0.0f,112.0f,1.0f);
+    backFace[1]=glm::vec4(19.0f,0.0f,110.0f,1.0f);
 
 
-    Kart mainKart= Kart(glm::vec4(1.0f,0.0f,0.0f,1.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),0.0f);
+    CollisionWall wall=CollisionWall(frontFace,backFace);
 
-    //glm::vec4 kartPosition= glm::vec4(1.0f,0.0f,0.0f,1.0f);
+
+
+    glm::vec4 kartPosition= glm::vec4(29.0f,0.0f,51.0f,1.0f);
+    Kart mainKart= Kart(kartPosition,glm::vec4(0.0f,0.0f,0.0f,0.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),1.7f);
+
     //glm::vec4 kartSpeed= glm::vec4(1.0f,0.0f,0.0f,0.0f);
 
     glm::vec4 camera_position_c  = glm::vec4(0.0f,1.5f,-2.5f,1.0f);
@@ -430,6 +441,10 @@ int main(int argc, char* argv[])
         mainKart.update(g_WKeyPressed,g_SKeyPressed,g_AKeyPressed,g_DKeyPressed,previousTime,currentTime);
         previousTime=currentTime;
 
+        if(wall.isInWall(mainKart.getCollisionRectangle())){
+            printf("colisao\n");
+        }
+
         #define SPHERE 0
         #define BUNNY  1
         #define PLANE  2
@@ -445,16 +460,10 @@ int main(int argc, char* argv[])
         DrawVirtualObject("skydome");
         glDisable(GL_CULL_FACE);
 
-        // Desenhamos o modelo da esfera
-        model = Matrix_Translate(0.5f,0.0f,-6.0f)
-              * Matrix_Rotate_Z(0.6f)
-              * Matrix_Rotate_X(0.2f);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, CAR);
-        DrawVirtualObject("Camero");
 
 
-        // Desenhamos o modelo do coelho
+
+        // Desenhamos o modelo do carro
         model = Matrix_Translate(mainKart.getPosition().x,mainKart.getPosition().y,mainKart.getPosition().z)
               * Matrix_Rotate_Y(mainKart.getOrientationAngle());
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));

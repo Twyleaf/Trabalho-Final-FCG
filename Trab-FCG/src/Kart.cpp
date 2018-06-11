@@ -1,5 +1,6 @@
 #include "Kart.h"
-
+#define M_PI 3.14159265358979323846
+#define M_PI_2 1.57079632679489661923
 #define TURNING_VALUE 0.4f
 
 
@@ -137,6 +138,18 @@ void Kart::updateSpeedOrientation(float kartRotation,double previousTime, double
 
     setSpeed(getMatrixRotateOrientation(kartRotation*timeDifference*-1.0f)*oldSpeed );
 
+}
+
+glm::vec4* Kart::getCollisionRectangle(){
+    glm::vec4 forwardVector=glm::normalize(getOrientationVector());
+    glm::vec4 leftVector=getMatrixRotateOrientation(M_PI_2)*forwardVector;
+    glm::vec4 center=getPosition();
+    glm::vec4 rectangle[4];
+    rectangle[0]=center+forwardVector*1.8f+leftVector*0.8f;
+    rectangle[1]=center+forwardVector*1.8f-leftVector*0.8f;
+    rectangle[2]=center-forwardVector*1.8f+leftVector*0.8f;
+    rectangle[3]=center-forwardVector*1.8f-leftVector*0.8f;
+    return rectangle;
 }
 
 void Kart::update(bool UpKeyPressed,bool DownKeyPressed,bool LeftKeyPressed,bool RightKeyPressed,double previousTime, double currentTime){
