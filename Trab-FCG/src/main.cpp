@@ -330,12 +330,12 @@ int main(int argc, char* argv[])
 
     double previousTime=glfwGetTime();
 
-    glm::vec4 frontFace[2];
-    glm::vec4 backFace[2];
-    frontFace[0]=glm::vec4(-8.0f,0.0f,43.0f,1.0f);
-    backFace[0]=glm::vec4(-8.0f,0.0f,39.0f,1.0f);
-    frontFace[1]=glm::vec4(110.0f,0.0f,43.0f,1.0f);
-    backFace[1]=glm::vec4(110.0f,0.0f,39.0f,1.0f);
+    glm::vec4 wallPoints[4];
+
+    wallPoints[0]=glm::vec4(-8.0f,0.0f,43.0f,1.0f);
+    wallPoints[2]=glm::vec4(-8.0f,0.0f,39.0f,1.0f);
+    wallPoints[1]=glm::vec4(110.0f,0.0f,43.0f,1.0f);
+    wallPoints[3]=glm::vec4(110.0f,0.0f,39.0f,1.0f);
 
     /*
     frontFace[0]=glm::vec4(20.0f,0.0f,-8.0f,1.0f);
@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
     */
 
 
-    CollisionWall wall=CollisionWall(frontFace,backFace);
+    CollisionWall wall=CollisionWall(wallPoints);
 
 
 
@@ -451,6 +451,7 @@ int main(int argc, char* argv[])
 
         if(wall.isInWall(mainKart.getCollisionRectangle())){
             printf("colisao\n");
+            mainKart.stop();
         }
 
         #define SPHERE 0

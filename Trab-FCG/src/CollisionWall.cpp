@@ -1,49 +1,54 @@
 #include "CollisionWall.h"
 
+void CollisionWall::setPoints(glm::vec4 pointsInput[4]){
+    points[0]=pointsInput[0];
+    points[1]=pointsInput[1];
+    points[2]=pointsInput[2];
+    points[3]=pointsInput[3];
+}
+
 void CollisionWall::setFrontFace(glm::vec4 faceInput[2]){
-    frontFace[0]=faceInput[0];
-    frontFace[1]=faceInput[1];
+    points[0]=faceInput[0];
+    points[1]=faceInput[1];
 
 }
 
 void CollisionWall::setBackFace(glm::vec4 faceInput[2]){
-    backFace[0]=faceInput[0];
-    backFace[1]=faceInput[1];
+    points[2]=faceInput[0];
+    points[3]=faceInput[1];
 }
 
 
 void CollisionWall::setFrontLeft(glm::vec4 pointInput){
-    frontFace[0]=pointInput;
+    points[0]=pointInput;
 }
 void CollisionWall::setFrontRight(glm::vec4 pointInput){
-    frontFace[1]=pointInput;
+    points[1]=pointInput;
 }
 
 void CollisionWall::setBackLeft(glm::vec4 pointInput){
-    backFace[0]=pointInput;
+    points[2]=pointInput;
 }
 void CollisionWall::setBackRight(glm::vec4 pointInput){
-    backFace[1]=pointInput;
+    points[3]=pointInput;
 }
 
 glm::vec4 CollisionWall::getFrontLeft(){
-    return frontFace[0];
+    return points[0];
 }
 glm::vec4 CollisionWall::getFrontRight(){
-    return frontFace[1];
+    return points[1];
 }
-
 glm::vec4 CollisionWall::getBackLeft(){
-    return backFace[0];
+    return points[2];
 }
 glm::vec4 CollisionWall::getBackRight(){
-    return backFace[1];
+    return points[3];
 }
 
-CollisionWall::CollisionWall(glm::vec4 frontFaceInput[2],glm::vec4 backFaceInput[2])
+CollisionWall::CollisionWall(glm::vec4 pointsInput[4])
 {
-    setFrontFace(frontFaceInput);
-    setBackFace(backFaceInput);
+    setPoints(pointsInput);
 }
 
 CollisionWall::~CollisionWall()

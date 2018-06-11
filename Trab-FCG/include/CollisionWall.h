@@ -13,7 +13,8 @@
 class CollisionWall
 {
     public:
-        CollisionWall(glm::vec4 frontFaceInput[2],glm::vec4 backFaceInput[2]);
+        CollisionWall(glm::vec4 pointsInput[4]);
+        void setPoints(glm::vec4 pointsInput[4]);
         void setFrontFace(glm::vec4 faceInput[2]);
         void setBackFace(glm::vec4 faceInput[2]);
         void setFrontLeft(glm::vec4 pointInput);
@@ -31,8 +32,7 @@ class CollisionWall
     protected:
 
     private:
-        glm::vec4 frontFace[2];
-        glm::vec4 backFace[2];
+        glm::vec4 points[4];
 
         float edgeEquation(glm::vec3 pontoA,glm::vec3 pontoB,glm::vec3 toTest);
 
