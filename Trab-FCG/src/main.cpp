@@ -328,14 +328,28 @@ int main(int argc, char* argv[])
     glm::mat4 the_model;
     glm::mat4 the_view;
 
-    double previousTime=glfwGetTime();
 
+    // BBox para detectar colisão
     glm::vec4 wallPoints[4];
 
-    wallPoints[0]=glm::vec4(-8.0f,0.0f,43.0f,1.0f);
-    wallPoints[2]=glm::vec4(-8.0f,0.0f,39.0f,1.0f);
-    wallPoints[1]=glm::vec4(110.0f,0.0f,43.0f,1.0f);
-    wallPoints[3]=glm::vec4(110.0f,0.0f,39.0f,1.0f);
+    // coordenadas obtidas com auxílio do programa Blender Render
+    // +2 no Z da parede de dentro para compensar frente até centro do carro
+    // parede inicial esquerda
+    wallPoints[0]=glm::vec4(-260.0f,0.0f,9.21f,1.0f);
+    wallPoints[2]=glm::vec4(-260.0f,0.0f,7.42f,1.0f);
+    wallPoints[1]=glm::vec4(148.06f,0.0f,9.21f,1.0f);
+    wallPoints[3]=glm::vec4(148.06f,0.0f,7.42f,1.0f);
+    CollisionWall wall_e=CollisionWall(wallPoints);
+
+
+    // parede inicial direita
+    wallPoints[0]=glm::vec4(-260.0f,0.0f,-7.42f,1.0f);
+    wallPoints[2]=glm::vec4(-260.0f,0.0f,-9.21f,1.0f);
+    wallPoints[1]=glm::vec4(148.06f,0.0f,-7.42f,1.0f);
+    wallPoints[3]=glm::vec4(148.06f,0.0f,-9.21f,1.0f);
+    CollisionWall wall_d=CollisionWall(wallPoints);
+
+
 
     /*
     frontFace[0]=glm::vec4(20.0f,0.0f,-8.0f,1.0f);
@@ -345,18 +359,18 @@ int main(int argc, char* argv[])
     */
 
 
-    CollisionWall wall=CollisionWall(wallPoints);
 
 
 
-    glm::vec4 kartPosition= glm::vec4(29.0f,0.0f,51.0f,1.0f);
+
+    glm::vec4 kartPosition= glm::vec4(-250.0f,0.0f,0.0f,1.0f);
     Kart mainKart= Kart(kartPosition,glm::vec4(0.0f,0.0f,0.0f,0.0f),glm::vec4(0.0f,0.0f,0.0f,0.0f),1.7f);
 
     //glm::vec4 kartSpeed= glm::vec4(1.0f,0.0f,0.0f,0.0f);
 
     glm::vec4 camera_position_c  = glm::vec4(0.0f,1.5f,-2.5f,1.0f);
 
-
+    double previousTime=glfwGetTime();
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
@@ -392,7 +406,8 @@ int main(int argc, char* argv[])
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-        camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);// glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
+        camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);
+        //glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
         //glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
         glm::vec4 camera_lookat_l    = mainKart.getPosition(); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
@@ -410,7 +425,7 @@ int main(int argc, char* argv[])
         // estão no sentido negativo! Veja slides 191-194 do documento
         // "Aula_09_Projecoes.pdf".
         float nearplane = -0.1f;  // Posição do "near plane"
-        float farplane  = -250.0f; // Posição do "far plane"
+        float farplane  = -700.0f; // Posição do "far plane"
 
         if (g_UsePerspectiveProjection)
         {
@@ -449,7 +464,9 @@ int main(int argc, char* argv[])
         mainKart.update(g_WKeyPressed,g_SKeyPressed,g_AKeyPressed,g_DKeyPressed,previousTime,currentTime);
         previousTime=currentTime;
 
-        if(wall.isInWall(mainKart.getCollisionRectangle())){
+        // Checa colisão
+        if(wall_e.isInWall(mainKart.getCollisionRectangle()) ||
+           wall_d.isInWall(mainKart.getCollisionRectangle())){
             printf("colisao\n");
             mainKart.stop();
         }
@@ -463,7 +480,8 @@ int main(int argc, char* argv[])
 
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
-        model = Matrix_Translate(0.0f,-10.0f,0.0f);
+        model = Matrix_Scale(2.0f, 1.0f, 1.0f) *
+                Matrix_Translate(0.0f,-10.0f,0.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SKY);
         DrawVirtualObject("skydome");
@@ -479,7 +497,8 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, CAR);
         DrawVirtualObject("Camero");
 
-        model = Matrix_Translate(0.0f,-0.3f,0.0f);
+        model = Matrix_Scale(2.0f, 1.0f, 1.0f) *
+                Matrix_Translate(0.0f,-0.3f,0.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
