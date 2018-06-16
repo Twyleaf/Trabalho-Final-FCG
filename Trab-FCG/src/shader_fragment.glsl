@@ -25,6 +25,8 @@ uniform mat4 projection;
 #define PISTA  3
 #define CAR    4
 #define SKY    5
+#define COW    6
+
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -67,6 +69,9 @@ void main()
 
     // Vetor que define o sentido da câmera em relação ao ponto atual.
     vec4 v = normalize(camera_position - p);
+
+    // Vetor que define hal-vector utilizado para implementar Blinn-Phong
+    vec4 h = normalize(v+l);
 
     // Coordenadas de textura U e V
     float U = 0.0;
@@ -112,8 +117,38 @@ void main()
         Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
     }
 
-
     color = Kd0 * (lambert + 0.01);
+
+    if ( object_id == COW ) //implementa-se os modelos de iluminação
+    {
+
+        // Propriedades espectrais da vaca
+        vec3 Kd = vec3(0.08,0.4,0.8);
+        vec3 Ks = vec3(0.8,0.8,0.8);
+        vec3 Ka = vec3(0.04,0.2,0.4);
+        float q = 32.0;
+
+        // Espectro da fonte de iluminação
+        vec3 I = vec3(1.0,1.0,1.0);
+        // Espectro da luz ambiente
+        vec3 Ia = vec3(0.2, 0.2, 0.2);
+
+        // Vetor que define o sentido da reflexão especular ideal.
+        vec4 r = -l + 2 * n * dot(l,n);
+
+        // Termo difuso utilizando a lei dos cossenos de Lambert
+        vec3 lambert_diffuse_term = Kd * I * max(0, dot(n,l));
+        // Termo ambiente
+        vec3 ambient_term = Ka * Ia;
+        // Termo especular utilizando o modelo de iluminação de Blinn-Phong
+        vec3 blinnphong_specular_term  = Ks * I * pow(max(0, dot(n,h)), q);
+
+        // Cor final do fragmento calculada com uma combinação dos termos difuso,
+        // especular, e ambiente.
+        color = lambert_diffuse_term + ambient_term + blinnphong_specular_term;
+    }
+
+
 
     // Cor final com correção gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas

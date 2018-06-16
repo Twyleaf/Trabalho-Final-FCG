@@ -18,6 +18,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <iomanip> // setprecision
 
 // Headers abaixo são específicos de C++
 #include <map>
@@ -50,6 +51,7 @@
 #include "Kart.h"
 #include "CollisionWall.h"
 
+#define PI_C 3.14159265359
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
@@ -181,13 +183,21 @@ float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
 float g_CameraDistance = 3.5f; // Distância da câmera para a origem
 
-// Variáveis que controlam rotação do antebraço
-float g_ForearmAngleZ = 0.0f;
-float g_ForearmAngleX = 0.0f;
+float freeCam = 0; //Controle free câmera
+bool freeCam2 = false;
 
-// Variáveis que controlam translação do torso
-float g_TorsoPositionX = 0.0f;
-float g_TorsoPositionY = 0.0f;
+// para implementar a free cam, utilizamos como global:
+glm::vec4 camera_position_c  = glm::vec4(0.0f,1.5f,-2.5f,1.0f);
+glm::vec4 camera_view_vector = glm::vec4(-250.0f,0.0f,0.0f,1.0f) - camera_position_c;
+glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+glm::vec4 vectorNormalized = glm::normalize(crossproduct(camera_view_vector, camera_up_vector));
+
+// para implementar olhada ao redor do mouse
+float yaw = 0;
+float pitch = 0;
+bool firstMouse = true;
+
+
 
 // Variável que controla o tipo de projeção utilizada: perspectiva ou ortográfica.
 bool g_UsePerspectiveProjection = true;
@@ -209,8 +219,14 @@ GLint bbox_max_uniform;
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
 
+
+
+
+
 int main(int argc, char* argv[])
 {
+
+
     // Inicializamos a biblioteca GLFW, utilizada para criar uma janela do
     // sistema operacional, onde poderemos renderizar com OpenGL.
     int success = glfwInit();
@@ -219,6 +235,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "ERROR: glfwInit() failed.\n");
         std::exit(EXIT_FAILURE);
     }
+
 
     // Definimos o callback para impressão de erros da GLFW no terminal
     glfwSetErrorCallback(ErrorCallback);
@@ -241,6 +258,8 @@ int main(int argc, char* argv[])
         fprintf(stderr, "ERROR: glfwCreateWindow() failed.\n");
         std::exit(EXIT_FAILURE);
     }
+
+
 
     // Definimos a função de callback que será chamada sempre que o usuário
     // pressionar alguma tecla do teclado ...
@@ -295,6 +314,10 @@ int main(int argc, char* argv[])
     ObjModel planemodel("../../data/plane.obj");
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
+
+    ObjModel cowmodel("../../data/cow.obj");
+    ComputeNormals(&cowmodel);
+    BuildTrianglesAndAddToVirtualScene(&cowmodel);
 
     ObjModel carmodel("../../data/camero.obj");
     BuildTrianglesAndAddToVirtualScene(&carmodel);
@@ -368,14 +391,13 @@ int main(int argc, char* argv[])
 
     //glm::vec4 kartSpeed= glm::vec4(1.0f,0.0f,0.0f,0.0f);
 
-    glm::vec4 camera_position_c  = glm::vec4(0.0f,1.5f,-2.5f,1.0f);
+
 
     double previousTime=glfwGetTime();
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
         // Aqui executamos as operações de renderização
-
         // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
         // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
         // Vermelho, Verde, Azul, Alpha (valor de transparência).
@@ -392,26 +414,40 @@ int main(int argc, char* argv[])
         // os shaders de vértice e fragmentos).
         glUseProgram(program_id);
 
-        // Computamos a posição da câmera utilizando coordenadas esféricas.  As
-        // variáveis g_CameraDistance, g_CameraPhi, e g_CameraTheta são
-        // controladas pelo mouse do usuário. Veja as funções CursorPosCallback()
-        // e ScrollCallback().
-        float r = g_CameraDistance;
-        float y = r*sin(g_CameraPhi);
-        float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
-        float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
+
+        if (!freeCam)
+        {
+            freeCam2 = false;
+            // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
+            // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
+            camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);
+            //glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
+            //glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
+            glm::vec4 camera_lookat_l    = mainKart.getPosition(); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
+            camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
+        }
+
+        /*else if (firstMouse)
+        {
+            // Descobre os valores para yaw e pitch atuais
+            // Como são dados por:
+
+            //frontCAM.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            //frontCAM.y = sin(glm::radians(pitch));
+            //frontCAM.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
 
+            //Primeiro descobrimos o ptch: .y = sin(pitch) --- logo arcsin(.y) = pitch
+            pitch = asin(glm::radians(vectorNormalized.y));
 
 
-        // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
-        // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-        camera_position_c  =  getNewCameraPosition(mainKart.getPosition(),camera_position_c,4.0);
-        //glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
-        //glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
-        glm::vec4 camera_lookat_l    = mainKart.getPosition(); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
-        glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
-        glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+            // com o pitch descobrimos o yaw
+            // .z = sin(yaw) * cos(pitch) -> sin(yaw) = .z / cos(pitch) -> asin(.z/cos(pitch)) = yaw
+            yaw = asin(glm::radians(camera_view_vector.z / cos(pitch)));
+
+            firstMouse = false;
+        }*/
+
 
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slide 179 do
@@ -471,12 +507,17 @@ int main(int argc, char* argv[])
             mainKart.stop();
         }
 
+        // Checa freeCam
+        if(freeCam)
+            mainKart.stop();
+
         #define SPHERE 0
         #define BUNNY  1
         #define PLANE  2
         #define PISTA  3
         #define CAR    4
         #define SKY    5
+        #define COW    6
 
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
@@ -485,6 +526,14 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SKY);
         DrawVirtualObject("skydome");
+        glDisable(GL_CULL_FACE);
+
+        model = Matrix_Scale(4.0f, 4.0f, 4.0f) *
+                //Matrix_Rotate_Y(90*180/PI_C) *
+                Matrix_Translate(-55.0f,0.5f,-5.0f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, COW);
+        DrawVirtualObject("cow");
         glDisable(GL_CULL_FACE);
 
 
@@ -1143,17 +1192,18 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
         // variável abaixo para false.
         g_MiddleMouseButtonPressed = false;
     }
+
+    // recalcula vectorNormalized para se mover na direção correta
+    vectorNormalized = glm::normalize(crossproduct(camera_view_vector, camera_up_vector));
 }
 
 // Função callback chamada sempre que o usuário movimentar o cursor do mouse em
 // cima da janela OpenGL.
 void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
 {
-    // Abaixo executamos o seguinte: caso o botão esquerdo do mouse esteja
-    // pressionado, computamos quanto que o mouse se movimento desde o último
-    // instante de tempo, e usamos esta movimentação para atualizar os
-    // parâmetros que definem a posição da câmera dentro da cena virtual.
-    // Assim, temos que o usuário consegue controlar a câmera.
+    if (freeCam)
+        freeCam2 = true;
+
 
     if (g_LeftMouseButtonPressed)
     {
@@ -1175,43 +1225,39 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         if (g_CameraPhi < phimin)
             g_CameraPhi = phimin;
 
-        // Atualizamos as variáveis globais para armazenar a posição atual do
-        // cursor como sendo a última posição conhecida do cursor.
-        g_LastCursorPosX = xpos;
-        g_LastCursorPosY = ypos;
-    }
+        float xoffset = xpos - g_LastCursorPosX;
+        float yoffset = g_LastCursorPosY - ypos;
 
-    if (g_RightMouseButtonPressed)
-    {
-        // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
-        float dx = xpos - g_LastCursorPosX;
-        float dy = ypos - g_LastCursorPosY;
 
-        // Atualizamos parâmetros da antebraço com os deslocamentos
-        g_ForearmAngleZ -= 0.01f*dx;
-        g_ForearmAngleX += 0.01f*dy;
+        float sensitivity = 0.4;
+        xoffset *= sensitivity;
+        yoffset *= sensitivity;
 
-        // Atualizamos as variáveis globais para armazenar a posição atual do
-        // cursor como sendo a última posição conhecida do cursor.
-        g_LastCursorPosX = xpos;
-        g_LastCursorPosY = ypos;
-    }
+        // aumenta yaw e pitch de acordo com a a sensibilidade
+        yaw   += xoffset;
+        pitch += yoffset;
 
-    if (g_MiddleMouseButtonPressed)
-    {
-        // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
-        float dx = xpos - g_LastCursorPosX;
-        float dy = ypos - g_LastCursorPosY;
+        // seta limites do pitch
+        if(pitch > 89.0f)
+            pitch = 89.0f;
+        if(pitch < -89.0f)
+            pitch = -89.0f;
 
-        // Atualizamos parâmetros da antebraço com os deslocamentos
-        g_TorsoPositionX += 0.01f*dx;
-        g_TorsoPositionY -= 0.01f*dy;
+        // calcula novo view vector baseando-se nos valores do yaw e pitch
+        glm::vec4 frontCAM;
+        frontCAM.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        frontCAM.y = sin(glm::radians(pitch));
+        frontCAM.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        frontCAM.w = 0.0f;
+        camera_view_vector = glm::normalize(frontCAM);
+
 
         // Atualizamos as variáveis globais para armazenar a posição atual do
         // cursor como sendo a última posição conhecida do cursor.
         g_LastCursorPosX = xpos;
         g_LastCursorPosY = ypos;
     }
+
 }
 
 // Função callback chamada sempre que o usuário movimenta a "rodinha" do mouse.
@@ -1235,28 +1281,63 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 // tecla do teclado. Veja http://www.glfw.org/docs/latest/input_guide.html#input_key
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
 {
+    float cameraSpeed = 0.085f; // velocidade para se movimentar a câmera livre
 
-    if (key == GLFW_KEY_W && action == GLFW_PRESS){
-        g_WKeyPressed=true;
+    if(freeCam2)
+        vectorNormalized = glm::normalize(crossproduct(camera_view_vector, camera_up_vector));
+
+
+    if (key == GLFW_KEY_W){
+        if (freeCam) // se estiver em modo free camera:
+        {
+            if(freeCam2) //se houver algum pinch ou yaw com mouse, corrige velocidade
+              camera_position_c += cameraSpeed * 6 * camera_view_vector;
+            else
+                camera_position_c += cameraSpeed * camera_view_vector;
+        }
+
+        else
+            g_WKeyPressed=true;
     }
     if (key == GLFW_KEY_W && action == GLFW_RELEASE){
-        g_WKeyPressed=false;
+            g_WKeyPressed=false;
     }
 
-    if (key == GLFW_KEY_A && action == GLFW_PRESS){
-        g_AKeyPressed=true;
+    if (key == GLFW_KEY_A){
+        if (freeCam) // se estiver em modo free camera:
+        {
+        camera_position_c -= vectorNormalized * (cameraSpeed*6); // vectorNormalized, pré-computado de glm::normalize(crossproduct(camera_view_vector, camera_up_vector))
+        camera_position_c.w = 1.0f;
+        }
+        else
+            g_AKeyPressed=true;
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE){
         g_AKeyPressed=false;
     }
-    if (key == GLFW_KEY_S && action == GLFW_PRESS){
-        g_SKeyPressed=true;
+    if (key == GLFW_KEY_S){
+        if(freeCam) // se estiver em modo free camera:
+        {
+            if(freeCam2) //se houver algum pinch ou yaw com mouse, corrige velocidade
+              camera_position_c -= cameraSpeed * 6 * camera_view_vector;
+            else
+                camera_position_c -= cameraSpeed * camera_view_vector;
+        }
+
+        else
+            g_SKeyPressed=true;
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
         g_SKeyPressed=false;
     }
-    if (key == GLFW_KEY_D && action == GLFW_PRESS){
-        g_DKeyPressed=true;
+    if (key == GLFW_KEY_D){
+        if(freeCam)
+        {   // vectorNormalized é precomputado de glm::normalize(crossproduct(camera_view_vector, camera_up_vector))
+            camera_position_c += vectorNormalized * (cameraSpeed*6);
+            camera_position_c.w = 1.0f;
+        }
+        else
+            g_DKeyPressed=true;
     }
     if (key == GLFW_KEY_D && action == GLFW_RELEASE){
         g_DKeyPressed=false;
@@ -1275,31 +1356,16 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
 
     float delta = 3.141592 / 16; // 22.5 graus, em radianos.
 
-    if (key == GLFW_KEY_X && action == GLFW_PRESS)
-    {
-        g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
 
-    if (key == GLFW_KEY_Y && action == GLFW_PRESS)
-    {
-        g_AngleY += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-    {
-        g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
+    // Se o usuário apertar a tecla espaço, muda o modo para free camera
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
-        g_AngleX = 0.0f;
-        g_AngleY = 0.0f;
-        g_AngleZ = 0.0f;
-        g_ForearmAngleX = 0.0f;
-        g_ForearmAngleZ = 0.0f;
-        g_TorsoPositionX = 0.0f;
-        g_TorsoPositionY = 0.0f;
+        if (freeCam == 0)
+            freeCam = 1; // 1 ativa a free câmera
+        else
+            freeCam = 0;
     }
+
 
     // Se o usuário apertar a tecla P, utilizamos projeção perspectiva.
     if (key == GLFW_KEY_P && action == GLFW_PRESS)
