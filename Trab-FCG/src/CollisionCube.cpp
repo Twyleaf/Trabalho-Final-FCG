@@ -51,6 +51,15 @@ glm::vec4 CollisionCube::getUpperLeftFarEdge(){
     return glm::vec4(lowerLeftNearEdge.x,getUpperRightFarEdge.y,getUpperRightFarEdge.z,1.0f);
 }
 
+bool CollisionCube::isPointInCube(glm::vec4 pointToTest){
+    glm::vec4 lowerLeftNearEdge=getLowerLeftNearEdge();
+    glm::vec4 upperRightFarEdge=getUpperRightFarEdge();
+    bool isWithinX=(pointToTest.x>lowerLeftNearEdge&&pointToTest.x<upperRightFarEdge);
+    bool isWithinY=(pointToTest.y>lowerLeftNearEdge&&pointToTest.y<upperRightFarEdge);
+    bool isWithinZ=(pointToTest.z>lowerLeftNearEdge&&pointToTest.z<upperRightFarEdge);
+    return(isWithinX&&isWithinY&&isWithinZ);
+}
+
 
 CollisionCube::CollisionCube(glm::vec4 lowerLeftNearEdge,glm::vec4 upperRightFarEdge)
 {
