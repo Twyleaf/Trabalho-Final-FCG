@@ -573,7 +573,7 @@
 
 1526903671 D
 
-1529132631 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\main.cpp
+1529178798 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -598,6 +598,8 @@
 	"matrices.h"
 	"Kart.h"
 	"CollisionWall.h"
+	"CollisionCube.h"
+	"CollisionSphere.h"
 
 1528582802 ter
 	<cmath>
@@ -1127,7 +1129,7 @@
 1529003846 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
-1529003846 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\kart.cpp
+1529179428 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\kart.cpp
 	"Kart.h"
 
 1529003846 c:\git repository\trabalho-final-fcg\trab-fcg\include\kart.h
@@ -2285,4 +2287,24 @@
 
 1529003846 c:\users\fc\desktop\xxx\trabalho-final-fcg-master\trab-fcg\include\glm\matrix.hpp
 	"detail/func_matrix.hpp"
+
+1529169652 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\collisioncube.cpp
+	"CollisionCube.h"
+
+1529169613 c:\git repository\trabalho-final-fcg\trab-fcg\include\collisioncube.h
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/gtc/type_ptr.hpp>
+
+1529177921 source:c:\git repository\trabalho-final-fcg\trab-fcg\src\collisionsphere.cpp
+	"CollisionSphere.h"
+
+1529175436 c:\git repository\trabalho-final-fcg\trab-fcg\include\collisionsphere.h
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/gtc/type_ptr.hpp>
 
