@@ -528,9 +528,20 @@ int main(int argc, char* argv[])
         DrawVirtualObject("skydome");
         glDisable(GL_CULL_FACE);
 
-        model = Matrix_Scale(4.0f, 4.0f, 4.0f) *
-                //Matrix_Rotate_Y(90*180/PI_C) *
-                Matrix_Translate(-55.0f,0.5f,-5.0f);
+        //vaca 1
+        model = Matrix_Translate(-195.0f,2.0f,-20.0f)*//segundo translação
+                    Matrix_Scale(4.0f, 4.0f, 4.0f);//primeiro escala
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, COW);
+        DrawVirtualObject("cow");
+        glDisable(GL_CULL_FACE);
+
+        //vaca 2
+        model = Matrix_Translate(-205.0f,2.0f,-20.0f)*//terceiro translação
+                    Matrix_Rotate_Y(PI_C)*//segundo rotação
+                    Matrix_Scale(2.0f, 4.0f, 2.0f);//primeiro escala
+                //Matrix_Rotate_Y(2) *
+                //Matrix_Translate(-55.0f,0.5f,-5.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, COW);
         DrawVirtualObject("cow");
