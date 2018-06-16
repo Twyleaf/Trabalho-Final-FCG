@@ -374,8 +374,8 @@ int main(int argc, char* argv[])
     wallPoints[3]=glm::vec4(148.06f,0.0f,-9.21f,1.0f);
     CollisionWall wall_d=CollisionWall(wallPoints);
 
-    CollisionCube collisionCow1=CollisionCube(glm::vec4(-220.0f,0.0f,-1.0f,1.0f),glm::vec4(-219.0f,4.0f,0.25f,1.0f));
-    CollisionSphere collisionSphere=CollisionSphere(glm::vec4(-170.0f,0.5f,-0.7f,1.0f),1.0f);
+    CollisionCube collisionCow1=CollisionCube(glm::vec4(-222.3f,0.0f,-1.0f,1.0f),glm::vec4(-219.0f,4.0f,0.25f,1.0f));
+    CollisionSphere collisionSphere=CollisionSphere(glm::vec4(-170.0f,0.5f,-0.7f,1.0f),2.0f);
 
 
     /*
@@ -572,7 +572,8 @@ int main(int argc, char* argv[])
         glDisable(GL_CULL_FACE);
 
         // Desenhamos o modelo da esfera
-        model = Matrix_Translate(-170.0f,0.5f,-0.7f);
+        model = Matrix_Translate(-170.0f,0.5f,-0.7f)*
+                        Matrix_Scale(2.0f, 2.0f, 2.0f);//primeiro escala
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SPHERE);
         DrawVirtualObject("sphere");

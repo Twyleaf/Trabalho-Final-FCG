@@ -36,11 +36,21 @@ bool CollisionSphere::isPointInSphere(glm::vec4 pointToTest){
 
 
 bool CollisionSphere::isObjectInSphere(glm::vec4* collisionRectangle){
+    /*
     for(int i=0;i<4;i++){
         if(isPointInSphere(collisionRectangle[i])){
             return true;
         }
-    }
+    }*/
+
+    //if(isPointInSphere(collisionRectangle[1]))
+        //return true;
+     if(isPointInSphere(collisionRectangle[0]))
+        return true;
+
+    if(isPointInSphere(collisionRectangle[1]))
+        return true;
+
     if(isPointInSphere(collisionRectangle[2]))
         return true;
 
