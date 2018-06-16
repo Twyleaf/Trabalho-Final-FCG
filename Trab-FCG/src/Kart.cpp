@@ -22,7 +22,7 @@ float Kart::getOrientationAngle(){
 }
 
 glm::vec4 Kart::getOrientationVector(){
-    glm::vec4 forwardVector= glm::vec4(0.0,0.0,1.0,0.0);
+    glm::vec4 forwardVector= glm::vec4(0.0f,0.0f,1.0f,0.0f);
     return getMatrixRotateOrientation(-1*getOrientationAngle())*forwardVector;
 }
 
@@ -143,7 +143,7 @@ void Kart::updateSpeedOrientation(float kartRotation,double previousTime, double
 glm::vec4* Kart::getCollisionRectangle(){
     glm::vec4 forwardVector=glm::normalize(getOrientationVector());
     glm::vec4 leftVector=getMatrixRotateOrientation(M_PI_2)*forwardVector;
-    glm::vec4 center=getPosition();
+    glm::vec4 center=getPosition()+glm::vec4(0.0f,0.6f,0.0f,0.0f);
     glm::vec4 rectangle[4];
     rectangle[0]=center+forwardVector*1.8f+leftVector*0.7f;
     rectangle[1]=center+forwardVector*1.8f-leftVector*0.7f;
