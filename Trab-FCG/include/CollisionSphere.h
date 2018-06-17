@@ -8,6 +8,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 
 class CollisionSphere
 {
@@ -19,7 +20,7 @@ class CollisionSphere
         CollisionSphere(glm::vec4 centerInput,float radiusInput);
         virtual ~CollisionSphere();
         bool isPointInSphere(glm::vec4 pointToTest);
-        bool isObjectInSphere(glm::vec4* collisionRectangle);
+        bool isObjectInSphere(std::vector<glm::vec4> collisionRectangle);
 
     protected:
 

@@ -8,7 +8,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include <vector>
 
 
 class Kart
@@ -19,7 +19,7 @@ class Kart
         glm::vec4 getAcceleration();
         float getOrientationAngle();
         glm::vec4 getOrientationVector();
-        glm::vec4* getCollisionRectangle();
+        std::vector<glm::vec4> getCollisionRectangle();
         void setPosition(glm::vec4 positionInput);
         void setSpeed(glm::vec4 speedInput);
         void setAcceleration(glm::vec4 accelerationInput);

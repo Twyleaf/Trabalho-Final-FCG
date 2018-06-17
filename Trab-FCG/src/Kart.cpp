@@ -2,7 +2,7 @@
 #define M_PI 3.14159265358979323846
 #define M_PI_2 1.57079632679489661923
 #define TURNING_VALUE 0.4f
-
+#include <iostream>
 
 glm::vec4 Kart::getPosition(){
     return position;
@@ -140,11 +140,14 @@ void Kart::updateSpeedOrientation(float kartRotation,double previousTime, double
 
 }
 
-glm::vec4* Kart::getCollisionRectangle(){
+std::vector<glm::vec4> Kart::getCollisionRectangle(){
     glm::vec4 forwardVector=glm::normalize(getOrientationVector());
     glm::vec4 leftVector=getMatrixRotateOrientation(M_PI_2)*forwardVector;
     glm::vec4 center=getPosition()+glm::vec4(0.0f,0.6f,0.0f,0.0f);
-    glm::vec4 rectangle[4];
+    std::vector<glm::vec4> rectangle(4);
+    if(glm::length(forwardVector)<=0){
+        std::cout<<"erro\n"<<std::endl;
+    }
     rectangle[0]=center+forwardVector*1.8f+leftVector*0.7f;
     rectangle[1]=center+forwardVector*1.8f-leftVector*0.7f;
     rectangle[2]=center-forwardVector*2.2f+leftVector*0.7f;

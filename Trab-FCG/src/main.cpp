@@ -53,6 +53,8 @@
 #include "CollisionCube.h"
 #include "CollisionSphere.h"
 
+#include <vector>
+
 #define PI_C 3.14159265359
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
@@ -504,18 +506,24 @@ int main(int argc, char* argv[])
         mainKart.update(g_WKeyPressed,g_SKeyPressed,g_AKeyPressed,g_DKeyPressed,previousTime,currentTime);
         previousTime=currentTime;
 
+        std::vector<glm::vec4>  collisionRectangleVector= mainKart.getCollisionRectangle();
+        glm::vec4 collisionArray[4];
+        for (int i=0;i<4;i++){
+                collisionArray[i]=collisionRectangleVector[i];
+        }
+
         // Checa colisão
-        if(wall_e.isInWall(mainKart.getCollisionRectangle()) ||
-           wall_d.isInWall(mainKart.getCollisionRectangle())){
+        if(wall_e.isInWall(collisionArray) ||
+           wall_d.isInWall(collisionArray)){
             printf("colisao\n");
             mainKart.stop();
         }
 
-        if(collisionCow1.isObjectInCube(mainKart.getCollisionRectangle())){
+        if(collisionCow1.isObjectInCube(collisionArray)){
              printf("colisao\n");
             mainKart.stop();
         }
-        if(collisionSphere.isObjectInSphere(mainKart.getCollisionRectangle())){
+        if(collisionSphere.isObjectInSphere(collisionRectangleVector)){
             printf("colisao\n");
             mainKart.stop();
 
